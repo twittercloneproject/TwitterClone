@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.UserActivity">
+
+    <item
+        android:id="@+id/profilePic"
+        android:orderInCategory="300"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile_pic"
+        app:showAsAction="ifRoom"></item>
+
+    <item
+        android:id="@+id/search_bar"
+        android:orderInCategory="300"
+        android:title="Search"
+        android:icon="@drawable/ic_search_icon"
+        app:showAsAction="ifRoom"></item>
+
+    <item
+        android:id="@+id/create_tweet"
+        android:orderInCategory="300"
+        android:title="Create Status"
+        android:icon="@drawable/ic_create_icon"
+        app:showAsAction="ifRoom"></item>
+
+    <item
+        android:id="@+id/signOut"
+        android:orderInCategory="300"
+        android:title="Sign Out"
+        app:showAsAction="ifRoom"></item>
+
+    <item
+        android:id="@+id/followOrunfollow"
+        android:orderInCategory="300"
+        android:title="Follow"
+        app:showAsAction="ifRoom"></item>
+
+</menu>
