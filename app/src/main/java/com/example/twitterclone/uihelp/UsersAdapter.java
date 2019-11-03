@@ -4,8 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.twitterclone.R;
@@ -27,11 +27,13 @@ public class UsersAdapter extends ArrayAdapter<User> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.follow_item, parent, false);
         }
         // Lookup view for data population
-        ImageView profilePic = (ImageView) convertView.findViewById(R.id.profilePicImageView) ;
+        WebView profilePic = (WebView) convertView.findViewById(R.id.profilePicWebView) ;
         TextView name = (TextView) convertView.findViewById(R.id.name);
         TextView alias = (TextView) convertView.findViewById(R.id.usernameDate);
         // Populate the data into the template view using the data object
-        profilePic.setImageResource(user.getImageID());
+        profilePic.getSettings().setLoadWithOverviewMode(true);
+        profilePic.getSettings().setUseWideViewPort(true);
+        profilePic.loadUrl(user.getUrl());
         name.setText(user.getFirstName() + " " + user.getLastName());
         alias.setText(user.getAlias().getUsername());
         // Return the completed view to render on screen

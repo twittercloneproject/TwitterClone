@@ -14,13 +14,13 @@ public class User {
     private Story story;
     private List<User> followers;
     private List<User> followings;
-    private int imageID;
+    private String url;
 
-    public User(String firstName, String lastName, Alias alias, int imageID) {
+    public User(String firstName, String lastName, Alias alias, String url) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.alias = alias;
-        this.imageID = imageID;
+        this.url = url;
         this.feed = new Feed();
         this.story = new Story();
         this.followings = new ArrayList<User>();
@@ -87,11 +87,11 @@ public class User {
         this.story = story;
     }
 
-    public int getImageID() {
-        return imageID;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImageID(int imageID) {
-        this.imageID = imageID;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

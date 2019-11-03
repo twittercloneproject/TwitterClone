@@ -2,16 +2,20 @@ package com.example.twitterclone.uihelp;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.twitterclone.R;
+import com.example.twitterclone.data.Model;
 import com.example.twitterclone.data.Status;
+import com.example.twitterclone.data.User;
 
 import java.util.List;
 
@@ -29,18 +33,26 @@ public class StatusesAdapter extends ArrayAdapter<Status> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.status_item, parent, false);
         }
         // Lookup view for data population
-        ImageView profilePic = (ImageView) convertView.findViewById(R.id.profilePicImageView) ;
+        WebView profilePic = (WebView) convertView.findViewById(R.id.profilePicWebView) ;
         TextView name = (TextView) convertView.findViewById(R.id.name);
-        TextView alias = (TextView) convertView.findViewById(R.id.usernameDate);
+        TextView alias = (TextView) convertView.findViewById(R.id.username);
+        TextView date = (TextView)  convertView.findViewById(R.id.date);
         TextView message = (TextView) convertView.findViewById(R.id.tweetMessage);
-        ImageView uploadimage = (ImageView) convertView.findViewById((R.id.uploadImage));
+        WebView uploadimage = (WebView) convertView.findViewById((R.id.webImage));
         // Populate the data into the template view using the data object
-        profilePic.setImageResource((status.getImageID()));
+        Model model = Model.getInstance();
+        User user = model.findUser(status.getAlias().getUsername());
+        profilePic.getSettings().setLoadWithOverviewMode(true);
+        profilePic.getSettings().setUseWideViewPort(true);
+        profilePic.loadUrl(user.getUrl());
         name.setText(status.getName());
         alias.setText(status.getAlias().getUsername());
+        date.setText(status.getDate());
         message.setText(status.getMessage());
-        if(status.getImageID1() != 0) {
-            uploadimage.setImageResource(status.getImageID1());
+        if(!status.getUrl().equals("")) {
+            uploadimage.getSettings().setLoadWithOverviewMode(true);
+            uploadimage.getSettings().setUseWideViewPort(true);
+            uploadimage.loadUrl(status.getUrl());
         }
 
         // Return the completed view to render on screen

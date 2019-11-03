@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,8 +23,10 @@ import android.widget.Toast;
 
 import com.example.twitterclone.R;
 import com.example.twitterclone.data.Status;
+import com.example.twitterclone.data.User;
 import com.example.twitterclone.presenter.StoryPresenter;
 import com.example.twitterclone.uihelp.StatusesAdapter;
+import com.example.twitterclone.uihelp.WebViewPicture;
 
 import java.util.List;
 
@@ -58,25 +61,25 @@ public class StoryFragment extends Fragment {
 
         Button close = (Button) myDialog.findViewById(R.id.closeButton);
         List indexs;
-        ImageView profilePic = (ImageView) myDialog.findViewById(R.id.profilePic);
+        WebView profilePic = (WebView) myDialog.findViewById(R.id.profilePic);
         TextView aliasView = (TextView) myDialog.findViewById(R.id.alias);
+        TextView dateView = (TextView) myDialog.findViewById(R.id.date);
         TextView message = (TextView) myDialog.findViewById(R.id.message);
-        ImageView uploadImage = (ImageView) myDialog.findViewById(R.id.uploadImage);
-        TextView t = view.findViewById(R.id.usernameDate);
+        WebView uploadImage = (WebView) myDialog.findViewById(R.id.webImage);
+        TextView t = view.findViewById(R.id.username);
+        TextView d = view.findViewById(R.id.date);
+        Status s = presenter.getStatus(t.getText().toString(), d.getText().toString());
+        User u = presenter.getUser(t.getText().toString());
+        profilePic.getSettings().setLoadWithOverviewMode(true);
+        profilePic.getSettings().setUseWideViewPort(true);
+        profilePic.loadUrl(u.getUrl());
+        if(!s.getUrl().equals("")) {
+            uploadImage.getSettings().setLoadWithOverviewMode(true);
+            uploadImage.getSettings().setUseWideViewPort(true);
+            uploadImage.loadUrl(s.getUrl());
+        }
+        dateView.setText(s.getDate());
 
-
-        if(t.getText().toString().equals("@test1")) {
-            profilePic.setImageResource(R.drawable.test1);
-        }
-        else if(t.getText().toString().equals("@test2")) {
-            profilePic.setImageResource(R.drawable.test2);
-        }
-        else if(t.getText().toString().equals("@test3")) {
-            profilePic.setImageResource(R.drawable.test3);
-        }
-        else {
-            profilePic.setImageResource(R.drawable.test4);
-        }
         message.setMovementMethod(LinkMovementMethod.getInstance());
         aliasView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -161,9 +164,6 @@ public class StoryFragment extends Fragment {
             if(indexs1.size() > 1) {
                 mySpannable2.setSpan(myClickableSpan1, (int) indexs1.get(0), (int) indexs1.get(1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-        }
-        if(t.getText().toString().equals("first #forever tweet @test2")) {
-            uploadImage.setImageResource(R.drawable.test3);
         }
 
         close.setOnClickListener(new View.OnClickListener() {

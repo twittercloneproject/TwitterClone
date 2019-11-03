@@ -1,5 +1,6 @@
 package com.example.twitterclone.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Status {
@@ -7,26 +8,19 @@ public class Status {
     private String message;
     private Alias alias;
     private String date;
-    private int imageID;
-    private int imageID1 = 0;
+    private String url;
+    private List<String> hashtags;
 
 
-    public Status(String name, String message, Alias alias, String date, int imageID) {
+    public Status(String name, String message, Alias alias, String date, String url) {
         this.name = name;
         this.message = message;
         this.alias = alias;
         this.date = date;
-        this.imageID = imageID;
-
+        this.url = url;
+        this.hashtags= new ArrayList<String>();
     }
 
-    public int getImageID1() {
-        return imageID1;
-    }
-
-    public void setImageID1(int imageID1) {
-        this.imageID1 = imageID1;
-    }
 
     public String getName() {
         return name;
@@ -44,12 +38,20 @@ public class Status {
         return date;
     }
 
-    public int getImageID() {
-        return imageID;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImageID(int imageID) {
-        this.imageID = imageID;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public List<String> getHashtags() {
+        return hashtags;
+    }
+
+    public void addHashtags(String hashtag) {
+        this.hashtags.add(hashtag);
     }
 }
 

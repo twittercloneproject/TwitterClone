@@ -64,9 +64,9 @@ public class UserPresenter {
         return false;
     }
 
-    public int getUserImage() {
+    public String getUserImage() {
         viewedUser = model.getViewedUser();
-        return viewedUser.getImageID();
+        return viewedUser.getUrl();
     }
 
 }

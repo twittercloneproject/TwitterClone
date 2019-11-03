@@ -17,6 +17,14 @@ public class StoryPresenter {
         return currentStory.getMyStatuses();
     }
 
+    public Status getStatus(String alias, String date) {
+        return model.getStatus(alias, date);
+    }
+
+    public User getUser(String alias) {
+        return model.getUser(alias);
+    }
+
     public List searchMessage(String message) {
         return model.searchAlias(message);
     }

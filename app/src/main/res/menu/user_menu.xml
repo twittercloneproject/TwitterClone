@@ -5,13 +5,6 @@
     tools:context=".activity.UserActivity">
 
     <item
-        android:id="@+id/profilePic"
-        android:orderInCategory="300"
-        android:title="Profile"
-        android:icon="@drawable/ic_profile_pic"
-        app:showAsAction="ifRoom"></item>
-
-    <item
         android:id="@+id/search_bar"
         android:orderInCategory="300"
         android:title="Search"

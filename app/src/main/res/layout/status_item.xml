@@ -8,10 +8,12 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/profilePicImageView"
+        <WebView
+            android:id="@+id/profilePicWebView"
             android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,7 +26,12 @@
                 android:layout_height="wrap_content"
                 android:text="something" />
             <TextView
-                android:id="@+id/usernameDate"
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tweet" />
+            <TextView
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tweet" />
@@ -37,9 +44,12 @@
         android:layout_height="wrap_content"
         android:text="Tweet" />
 
-    <ImageView
+
+    <WebView
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:id="@+id/uploadImage"/>
+        android:id="@+id/webImage"
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 
 </LinearLayout>

@@ -20,6 +20,14 @@ public class FeedPresenter {
         return model.searchAlias(message);
     }
 
+    public Status getStatus(String alias, String date) {
+        return model.getStatus(alias, date);
+    }
+
+    public User getUser(String alias) {
+        return model.getUser(alias);
+    }
+
     public void findUser(String alias) {
         User user = model.findUser(alias);
         model.setViewedUser(user);
