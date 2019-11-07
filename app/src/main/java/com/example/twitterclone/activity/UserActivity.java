@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.twitterclone.R;
+import com.example.twitterclone.presenter.FeedPresenter;
 import com.example.twitterclone.presenter.UserPresenter;
 import com.example.twitterclone.uihelp.Pager;
 import com.example.twitterclone.uihelp.WebViewPicture;
@@ -38,7 +39,7 @@ import java.time.LocalDateTime;
 
 //Implementing the interface OnTabSelectedListener to our MainActivity
 //This interface would help in swiping views
-public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
+public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private UserPresenter presenter;
     //This is our tablayout

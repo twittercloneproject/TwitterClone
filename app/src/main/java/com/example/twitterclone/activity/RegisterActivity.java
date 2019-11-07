@@ -49,22 +49,24 @@ public class RegisterActivity extends AppCompatActivity {
                 lastNameEditText = (EditText) findViewById(R.id.lastNameEditText);
                 final String lastName = lastNameEditText.getText().toString();
                 usernameEditText = (EditText) findViewById(R.id.usernameEditText);
-                final String username  = usernameEditText.getText().toString();
+                final String username = usernameEditText.getText().toString();
                 passwordEditText = (EditText) findViewById(R.id.passwordEditText);
                 final String password = passwordEditText.getText().toString();
-                if(presenter.register(firstName, lastName, username, password)) {
-                    Intent i = new Intent(getApplicationContext(), UserActivity.class);
-                    startActivity(i);
-                }
-                else {
-                    Toast.makeText(RegisterActivity.this, "Sign Up Failed", Toast.LENGTH_SHORT).show();
-                }
+                presenter.register(firstName, lastName, username, password, "", RegisterActivity.this);
             }
-        });
 
+        });
 
     }
 
 
-
+    public void onRegister(boolean success) {
+        if(success) {
+            Intent i = new Intent(getApplicationContext(), UserActivity.class);
+            startActivity(i);
+        }
+        else {
+            Toast.makeText(RegisterActivity.this, "Sign Up Failed", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

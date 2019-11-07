@@ -69,10 +69,9 @@ public class StoryFragment extends Fragment {
         TextView t = view.findViewById(R.id.username);
         TextView d = view.findViewById(R.id.date);
         Status s = presenter.getStatus(t.getText().toString(), d.getText().toString());
-        User u = presenter.getUser(t.getText().toString());
         profilePic.getSettings().setLoadWithOverviewMode(true);
         profilePic.getSettings().setUseWideViewPort(true);
-        profilePic.loadUrl(u.getUrl());
+        profilePic.loadUrl(s.getProfilePic());
         if(!s.getUrl().equals("")) {
             uploadImage.getSettings().setLoadWithOverviewMode(true);
             uploadImage.getSettings().setUseWideViewPort(true);

@@ -40,11 +40,9 @@ public class StatusesAdapter extends ArrayAdapter<Status> {
         TextView message = (TextView) convertView.findViewById(R.id.tweetMessage);
         WebView uploadimage = (WebView) convertView.findViewById((R.id.webImage));
         // Populate the data into the template view using the data object
-        Model model = Model.getInstance();
-        User user = model.findUser(status.getAlias().getUsername());
         profilePic.getSettings().setLoadWithOverviewMode(true);
         profilePic.getSettings().setUseWideViewPort(true);
-        profilePic.loadUrl(user.getUrl());
+        profilePic.loadUrl(status.getProfilePic());
         name.setText(status.getName());
         alias.setText(status.getAlias().getUsername());
         date.setText(status.getDate());

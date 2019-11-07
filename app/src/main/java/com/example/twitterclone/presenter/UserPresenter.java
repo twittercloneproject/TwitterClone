@@ -42,13 +42,7 @@ public class UserPresenter {
     }
 
     public boolean search(String alias) {
-        List<User> allUsers = model.getAllUsers();
-        for(int i = 0; i < allUsers.size(); i++) {
-            if(allUsers.get(i).getAlias().getUsername().equals(alias)) {
-                model.setViewedUser(allUsers.get(i));
-                return true;
-            }
-        }
+
         return false;
     }
 

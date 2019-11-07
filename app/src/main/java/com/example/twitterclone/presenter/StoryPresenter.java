@@ -21,17 +21,13 @@ public class StoryPresenter {
         return model.getStatus(alias, date);
     }
 
-    public User getUser(String alias) {
-        return model.getUser(alias);
-    }
 
     public List searchMessage(String message) {
         return model.searchAlias(message);
     }
 
     public void findUser(String alias) {
-        User user = model.findUser(alias);
-        model.setViewedUser(user);
+
     }
 
     public List findHash(String message) {

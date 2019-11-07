@@ -3,6 +3,7 @@ package com.example.twitterclone.uihelp;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import com.example.twitterclone.activity.FeedFragment;
 import com.example.twitterclone.activity.FollowerFragment;
@@ -32,15 +33,21 @@ public class Pager extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 FeedFragment feed = new FeedFragment();
+                Log.d("activity", "here");
                 return feed;
             case 1:
                 StoryFragment story = new StoryFragment();
+                Log.d("activity", "here1");
                 return story;
             case 2:
                 FollowingFragment following = new FollowingFragment();
+                Log.d("activity", "here2");
+
                 return following;
             case 3:
                 FollowerFragment follower = new FollowerFragment();
+                Log.d("activity", "here3");
+
                 return follower;
             default:
                 return null;
