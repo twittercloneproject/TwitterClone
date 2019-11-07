@@ -1,12 +1,9 @@
 package com.example.twitterclone.presenter;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 import com.example.twitterclone.activity.FeedFragment;
-import com.example.twitterclone.data.Alias;
 import com.example.twitterclone.data.Feed;
 import com.example.twitterclone.data.Model;
 import com.example.twitterclone.data.Status;
@@ -29,8 +26,19 @@ public class FeedPresenter {
         return currentFeed.getStatuses();
     }
 
-    public List findAlias(String message) {
+    public List<Integer> findAlias(String message) {
         return model.searchAlias(message);
+    }
+
+    public List<Status> getHashtagStatuses() {
+        return model.getHashtagStatuses();
+    }
+
+    public void setHashtagStatuses(String hashtag) {
+        String[] reqs = new String[1];
+        reqs[0] = hashtag;
+        HashtagTask hTask = new HashtagTask();
+        hTask.execute(reqs);
     }
 
     public Status getStatus(String alias, String date) {
@@ -135,7 +143,24 @@ public class FeedPresenter {
 
         @Override
         protected void onPostExecute(Boolean followingResult) {
-            fragment.onLinkSelected();
+            fragment.onAliasSelected();
+        }
+
+    }
+
+    private class HashtagTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... hashtags) {
+            return model.setHashtagStatuses(hashtags[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if(success) {
+                Log.d("activity", "hashtag post execute");
+                fragment.onHashtagSelected();
+            }
         }
 
     }

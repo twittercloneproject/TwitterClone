@@ -58,6 +58,14 @@ public class FeedFragment extends Fragment {
             }
         });
 
+        Button nextPageButton = view.findViewById(R.id.nextPageButton);
+        nextPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return view;
     }
 
@@ -97,8 +105,7 @@ public class FeedFragment extends Fragment {
         aliasSS.setSpan(new MyClickableAliasSpan(tmp), index1, index2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         aliasView.setText(aliasSS);
         aliasView.setMovementMethod(LinkMovementMethod.getInstance());
-        Log.d("activity", "here");
-/*
+
         t = view.findViewById(R.id.tweetMessage);
         tmp = t.getText().toString();
         aliasIndexes = presenter.findAlias(tmp);
@@ -108,10 +115,16 @@ public class FeedFragment extends Fragment {
             index1 = (int) aliasIndexes.get(i);
             index2 = (int) aliasIndexes.get(i+1)  + 1;
             messageSS.setSpan(new MyClickableAliasSpan(tmp.substring(index1, index2)), index1, index2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            i += 2;
+        }
+        for(int i = 0; i < hashIndexes.size(); ) {
+            index1 = (int) hashIndexes.get(i);
+            index2 = (int) hashIndexes.get(i+1)  + 1;
+            messageSS.setSpan(new MyClickableHashSpan(tmp.substring(index1, index2)), index1, index2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            i += 2;
         }
         messageView.setText(messageSS);
         messageView.setMovementMethod(LinkMovementMethod.getInstance());
-        */
 
 
         close.setOnClickListener(new View.OnClickListener() {
@@ -125,12 +138,46 @@ public class FeedFragment extends Fragment {
         myDialog.show();
     }
 
-    public void onLinkSelected() {
+    public void onAliasSelected() {
         Intent i = new Intent(getContext(), UserActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean("story", true);
         i.putExtras(bundle);
         startActivity(i);
+    }
+
+    public void onHashtagSelected() {
+        Log.d("activity", "onhashthag func ");
+        myDialog.setContentView(R.layout.view_hashtag);
+        List<Status> hashtagStatuses = presenter.getHashtagStatuses();
+        final ListView hashListView = (ListView) myDialog.findViewById(R.id.hashtagLV);
+        StatusesAdapter adapter = new StatusesAdapter(getActivity(), hashtagStatuses);
+        hashListView.setAdapter(adapter);
+        hashListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                viewStatus(view);
+            }
+        });
+
+        Button closeButton = (Button) myDialog.findViewById(R.id.closeButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+
+        Button nextPageButton = myDialog.findViewById(R.id.nextPageButton);
+        nextPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        myDialog.show();
     }
 
     private class MyClickableAliasSpan extends ClickableSpan {
@@ -157,7 +204,7 @@ public class FeedFragment extends Fragment {
         @Override
         public void onClick(@NonNull View widget) {
             myDialog.dismiss();
-
+            presenter.setHashtagStatuses(this.hash);
         }
     }
 

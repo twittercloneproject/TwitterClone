@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.twitterclone.R;
@@ -28,6 +29,14 @@ public class FollowingFragment extends Fragment {
         UsersAdapter adapter = new UsersAdapter(getActivity(), arrayOfUsers);
         ListView listView = (ListView) view.findViewById(R.id.followingLV);
         listView.setAdapter(adapter);
+
+        Button nextPageButton = view.findViewById(R.id.nextPageButton);
+        nextPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         return view;
     }

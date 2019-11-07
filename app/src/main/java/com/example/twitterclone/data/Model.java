@@ -10,12 +10,14 @@ public class Model {
 
     private User currentUser;
     private User viewedUser;
+    private List<Status> hashtagStatuses;
     private String password = "";
     private TwitterProxy proxy;
 
 
     private Model() {
         proxy = new TwitterProxy();
+        hashtagStatuses = new ArrayList<Status>();
     }
 
     public static Model getInstance() {
@@ -46,7 +48,11 @@ public class Model {
         return viewedUser;
     }
 
-    public List searchAlias(String message) {
+    public List<Status> getHashtagStatuses() {
+        return hashtagStatuses;
+    }
+
+    public List<Integer> searchAlias(String message) {
         List<Integer> indexes = new ArrayList<Integer>();
         int index;
         int secondIndex;
@@ -87,7 +93,7 @@ public class Model {
         return null;
     }
 
-    public List searchHashTags(String message) {
+    public List<Integer> searchHashTags(String message) {
         List<Integer> indexes = new ArrayList<Integer>();
         int index;
         int secondIndex;
@@ -99,7 +105,7 @@ public class Model {
                 indexes.add(index);
                 secondIndex = message.indexOf(' ', index);
                 if (secondIndex == -1) {
-                    indexes.add(message.length());
+                    indexes.add(message.length()-1);
                     return indexes;
                 } else {
                     indexes.add(secondIndex - 1);
@@ -110,10 +116,13 @@ public class Model {
         return indexes;
     }
 
-    public void setViewedUser(String alias) {
+    public boolean setViewedUser(String alias) {
         User user = proxy.getUser(alias);
-        Log.d("model", String.valueOf(user));
+        if(user == null) {
+            return false;
+        }
         this.viewedUser = user;
+        return true;
     }
 
     public void setViewedUserFeed(String alias) {
@@ -156,6 +165,43 @@ public class Model {
         }
     }
 
+    public boolean setHashtagStatuses(String hashtag) {
+        this.hashtagStatuses = this.proxy.getHashtag(hashtag);
+        return true;
+    }
+
+    public void getNextFeedPage(String alias) {
+        Feed tmpList = proxy.getFeed(alias);
+        List<Status> newList = this.viewedUser.getFeed().getStatuses();
+        newList.addAll(tmpList.getStatuses());
+        this.viewedUser.getFeed().setStatuses(newList);
+    }
+
+    public void getNextStoryPage(String alias) {
+        Story tmpList = proxy.getStory(alias);
+        List<Status> newList = this.viewedUser.getStory().getMyStatuses();
+        newList.addAll(tmpList.getMyStatuses());
+        this.viewedUser.getStory().setMyStatuses(newList);
+    }
+
+    public void getNextHashtagPage(String alias) {
+        List<Status> tmpList = proxy.getHashtag(alias);
+        this.hashtagStatuses.addAll(tmpList);
+    }
+
+    public void getNextFollowersPage(String alias) {
+        List<User> tmpList = proxy.getFollowers(alias);
+        List<User> newList = this.viewedUser.getFollowers();
+        newList.addAll(tmpList);
+        this.viewedUser.setFollowers(newList);
+    }
+
+    public void getNextFollowingPage(String alias) {
+        List<User> tmpList = proxy.getFollowing(alias);
+        List<User> newList = this.viewedUser.getFollowings();
+        newList.addAll(tmpList);
+        this.viewedUser.setFollowings(newList);
+    }
 
 
 }

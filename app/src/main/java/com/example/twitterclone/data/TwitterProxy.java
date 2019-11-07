@@ -47,6 +47,9 @@ public class TwitterProxy {
         request.setAlias(alias);
         UserResult result = this.client.getuserPost(request);
         UserResultUser rUser = result.getUser();
+        if(rUser == null) {
+            return null;
+        }
         User user = new User(rUser.getFirstName(), rUser.getLastName(), new Alias(rUser.getAlias()), rUser.getUrlPicture());
         return user;
     }

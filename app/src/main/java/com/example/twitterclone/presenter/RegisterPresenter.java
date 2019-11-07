@@ -1,19 +1,10 @@
 package com.example.twitterclone.presenter;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.twitterclone.activity.RegisterActivity;
-import com.example.twitterclone.api.model.RegisterRequest;
-import com.example.twitterclone.api.model.RegisterResult;
-import com.example.twitterclone.api.model.UserRequest;
-import com.example.twitterclone.api.model.UserResult;
-import com.example.twitterclone.api.model.UserResultUser;
-import com.example.twitterclone.data.Alias;
 import com.example.twitterclone.data.Model;
-import com.example.twitterclone.data.TwitterProxy;
-import com.example.twitterclone.data.User;
 
 public class RegisterPresenter {
 
@@ -74,8 +65,7 @@ public class RegisterPresenter {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            model.setCurrentUser(model.getCurrentUser());
-
+            model.setCurrentUser(model.getViewedUser());
             String[] reqs = new String[1];
             reqs[0] = alias;
             FeedTask fTask = new FeedTask();
