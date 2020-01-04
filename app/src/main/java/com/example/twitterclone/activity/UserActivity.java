@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +36,8 @@ import com.example.twitterclone.uihelp.WebViewPicture;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 //Implementing the interface OnTabSelectedListener to our MainActivity
 //This interface would help in swiping views
@@ -49,6 +52,8 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
     private Dialog myDialog;
     private WebView profilePic;
+    private WebView uploadImage;
+    private MenuItem item;
 
 
     @Override
@@ -65,18 +70,20 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
         setSupportActionBar(toolbar);
         Log.d("user activity", "toolbar created");
 
-
+        this.uploadImage = findViewById(R.id.profilePic);
         this.profilePic = findViewById(R.id.profilePic);
         profilePic.getSettings().setLoadWithOverviewMode(true);
         profilePic.getSettings().setUseWideViewPort(true);
         profilePic.loadUrl(presenter.getUserImage());
-        profilePic.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                selectImage(UserActivity.this);
-                return false;
-            }
-        });
+        if(presenter.isCurrentUser()) {
+            profilePic.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    selectImage(UserActivity.this, "");
+                    return false;
+                }
+            });
+        }
 
         //Initializing the tablayout
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
@@ -128,18 +135,14 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.user_menu, menu);
 
-        MenuItem item = menu.findItem(R.id.followOrunfollow);
+        item = menu.findItem(R.id.followOrunfollow);
         if(presenter.isCurrentUser()) {
             item.setVisible(false);
         }
         else {
             item.setVisible(true);
-            if(presenter.isFollowing()) {
-                item.setTitle("Unfollow");
-            }
-            else {
-                item.setTitle("Follow");
-            }
+            presenter.isFollowing();
+            item.setTitle("Follow");
         }
 
         return true;
@@ -189,17 +192,20 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
         Button close = (Button) myDialog.findViewById(R.id.closeButton);
 
         WebView profilePic = (WebView) myDialog.findViewById(R.id.profilePic);
-        TextView aliasView = (TextView) myDialog.findViewById(R.id.alias);
+        final TextView aliasView = (TextView) myDialog.findViewById(R.id.alias);
         TextView dateView = (TextView) myDialog.findViewById(R.id.date);
-        LocalDateTime date = LocalDateTime.now();
+        final EditText messageView = (EditText) myDialog.findViewById(R.id.message);
+        final EditText url = (EditText) myDialog.findViewById(R.id.url);
+
+        final LocalDateTime date = LocalDateTime.now();
         dateView.setText(date.toString());
 
-        final WebView uploadImage = (WebView) myDialog.findViewById(R.id.uploadImage);
+        uploadImage = (WebView) myDialog.findViewById(R.id.uploadImage);
 
         profilePic.getSettings().setLoadWithOverviewMode(true);
         profilePic.getSettings().setUseWideViewPort(true);
         profilePic.loadUrl(presenter.getUserImage());
-        CharSequence alias = presenter.getAlias();
+        final CharSequence alias = presenter.getAlias();
         aliasView.setText(alias);
         uploadImage.setWebViewClient(new WebViewPicture());
 
@@ -208,11 +214,15 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
         uploadImage.loadUrl("data:image/png;base64,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");
         uploadImage.getSettings().setLoadsImagesAutomatically(true);
         uploadImage.getSettings().setJavaScriptEnabled(true);
-
-        uploadImage.setOnClickListener(new View.OnClickListener() {
+        uploadImage.setWebChromeClient(new WebChromeClient() {
+        });
+        uploadImage.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View v, MotionEvent event) {
+                String tmp = url.getText().toString();
 
+                selectImage(UserActivity.this, tmp);
+                return false;
             }
         });
 
@@ -226,6 +236,22 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String message = messageView.getText().toString();
+                List<Integer> indexes = presenter.findHashIndexes(message);
+                List<String> hashs = new ArrayList<String>();
+                for(int i = 0; i < indexes.size(); ) {
+                    int index1 = (int) indexes.get(i);
+                    int index2 = (int) indexes.get(i+1)  + 1;
+                    hashs.add(message.substring(index1, index2));
+                    i += 2;
+                }
+                String tmp = "a";
+                if(!uploadImage.getUrl().equals("data:image/png;base64,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")) {
+                    tmp = uploadImage.getUrl();
+                }
+                presenter.sendStatus(alias.toString(), alias.toString(), messageView.getText().toString(),
+                        date.toString(), hashs, presenter.getUserImage(), tmp);
+
                 myDialog.dismiss();
             }
         });
@@ -266,8 +292,21 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
         }
     }
 
-    private void selectImage(Context context) {
-        final CharSequence[] options = { "Take Photo", "Cancel" };
+    public void onSent(boolean success) {
+        Toast.makeText(getApplicationContext(), "message Sent", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onIsFollowing(boolean test) {
+        if(test) {
+            item.setTitle("UnFollow");
+        }
+        else {
+            item.setTitle("Follow");
+        }
+    }
+
+    private void selectImage(Context context, final String url) {
+        final CharSequence[] options = { "Take Photo", "Use Url", "Cancel" };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose your profile picture");
@@ -280,8 +319,12 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 if (options[item].equals("Take Photo")) {
                     Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(takePicture, 0);
-
-                } else if (options[item].equals("Cancel")) {
+                }
+                else if (options[item].equals("Use Url")) {
+                    Log.d("activity", "here");
+                    Log.d("activity", url);
+                    uploadImage.loadUrl(url);
+                }else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
             }
@@ -304,8 +347,9 @@ public class UserActivity extends AppCompatActivity implements TabLayout.OnTabSe
                         String imgageBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         String dataURL= "data:image/png;base64," + imgageBase64;
 
-                        this.profilePic.loadUrl(dataURL);
-                        //  profilePic.setImageBitmap(selectedImage);
+                        this.uploadImage.loadUrl(dataURL);
+                        presenter.updatePhoto(presenter.getAlias(), profilePic.getUrl());
+
                     }
 
                     break;

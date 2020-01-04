@@ -10,7 +10,6 @@ public class Status {
     private String date;
     private String url;
     private List<String> hashtags;
-    private int id;
     private String profilePic;
 
 
@@ -18,14 +17,13 @@ public class Status {
         this.hashtags = hashtags;
     }
 
-    public Status(String name, String message, Alias alias, String date, String url, int id, String profilePic) {
+    public Status(String name, String message, Alias alias, String date, String url, String profilePic) {
         this.name = name;
         this.message = message;
         this.alias = alias;
         this.date = date;
         this.url = url;
         this.hashtags = new ArrayList<String>();
-        this.id = id;
         this.profilePic = profilePic;
     }
 
@@ -62,9 +60,6 @@ public class Status {
         this.hashtags.add(hashtag);
     }
 
-    public int getId() {
-        return id;
-    }
 
     public String getProfilePic() {
         return profilePic;

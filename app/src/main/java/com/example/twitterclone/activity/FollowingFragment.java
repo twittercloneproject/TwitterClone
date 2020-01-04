@@ -19,14 +19,16 @@ import java.util.List;
 public class FollowingFragment extends Fragment {
 
     private FollowingPresenter presenter;
+    private List<User> arrayOfUsers;
+    private UsersAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_following, container, false);
 
-        presenter = new FollowingPresenter();
-        List<User> arrayOfUsers = presenter.getFollowing();
-        UsersAdapter adapter = new UsersAdapter(getActivity(), arrayOfUsers);
+        presenter = new FollowingPresenter(FollowingFragment.this);
+        arrayOfUsers = presenter.getFollowing();
+        adapter = new UsersAdapter(getActivity(), arrayOfUsers);
         ListView listView = (ListView) view.findViewById(R.id.followingLV);
         listView.setAdapter(adapter);
 
@@ -34,11 +36,16 @@ public class FollowingFragment extends Fragment {
         nextPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                presenter.getNextPageFollowing();
             }
         });
 
         return view;
+    }
+
+    public void updateFollowing() {
+        arrayOfUsers = presenter.getFollowing();
+        adapter.notifyDataSetChanged();
     }
 
 }

@@ -64,7 +64,8 @@ public class RegisterActivity extends AppCompatActivity {
                 final String username = usernameEditText.getText().toString();
                 passwordEditText = (EditText) findViewById(R.id.passwordEditText);
                 final String password = passwordEditText.getText().toString();
-                presenter.register(firstName, lastName, username, password, "", RegisterActivity.this);
+
+                presenter.register(firstName, lastName, username, password, profilePic.getUrl(), RegisterActivity.this);
             }
 
         });
@@ -119,11 +120,8 @@ public class RegisterActivity extends AppCompatActivity {
                         byte[] byteArray = byteArrayOutputStream.toByteArray();
                         String imgageBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         String dataURL= "data:image/png;base64," + imgageBase64;
-
                         profilePic.loadUrl(dataURL);
-                      //  profilePic.setImageBitmap(selectedImage);
                     }
-
                     break;
                 case 1:
                     if (resultCode == RESULT_OK && data != null) {

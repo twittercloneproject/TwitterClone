@@ -14,14 +14,14 @@ public class RegisterPresenter {
 
 
     public void register(String firstName, String lastName, String username, String password, String profilePic, RegisterActivity activity) {
-        this.alias = "@test1";
+        this.alias = username;
         this.activity = activity;
         String[] reqs = new String[5];;
         reqs[0] = firstName;
         reqs[1] = lastName;
-        reqs[2] = alias;
+        reqs[2] = username;
         reqs[3] = password;
-        reqs[4] = "";
+        reqs[4] = profilePic;
         RegisterTask sTask = new RegisterTask();
         sTask.execute(reqs);
     }

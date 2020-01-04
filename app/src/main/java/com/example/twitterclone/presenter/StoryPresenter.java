@@ -41,6 +41,12 @@ public class StoryPresenter {
         hTask.execute(reqs);
     }
 
+    public void getNextStoryPage() {
+        String[] reqs = new String[1];
+        reqs[0] = "next";
+        StoryTask sTask = new StoryTask();
+        sTask.execute(reqs);
+    }
 
     public List findAlias(String message) {
         return model.searchAlias(message);
@@ -58,7 +64,13 @@ public class StoryPresenter {
         return model.searchHashTags(message);
     }
 
-
+    public void getNexthashtagPage(String hashtag) {
+        String[] reqs = new String[2];
+        reqs[0] = "next";
+        reqs[1] = hashtag;
+        HashtagTask hTask = new HashtagTask();
+        hTask.execute(reqs);
+    }
 
     private class UserTask extends AsyncTask<String, Void, Boolean> {
 
@@ -100,17 +112,27 @@ public class StoryPresenter {
 
         @Override
         protected Boolean doInBackground(String... StoryRequests) {
-            model.setViewedUserStory(StoryRequests[0]);
-            return true;
+            if(StoryRequests[0].equals("next")) {
+                model.getNextStoryPage();
+                return false;
+            }
+            else {
+                model.setViewedUserStory(StoryRequests[0]);
+                return true;
+            }
         }
 
         @Override
         protected void onPostExecute(Boolean storyResult) {
-
-            String[] reqs = new String[1];
-            reqs[0] = alias;
-            FollowerTask fTask = new FollowerTask();
-            fTask.execute(reqs);
+            if(storyResult) {
+                String[] reqs = new String[1];
+                reqs[0] = alias;
+                FollowerTask fTask = new FollowerTask();
+                fTask.execute(reqs);
+            }
+            else {
+                fragment.updateStory();
+            }
         }
 
     }
@@ -152,7 +174,13 @@ public class StoryPresenter {
 
         @Override
         protected Boolean doInBackground(String... hashtags) {
-            return model.setHashtagStatuses(hashtags[0]);
+            if(hashtags[0].equals("next")) {
+                model.getNextHashtagPage(hashtags[1]);
+                return false;
+            }
+            else {
+                return model.setHashtagStatuses(hashtags[0]);
+            }
         }
 
         @Override
@@ -160,6 +188,9 @@ public class StoryPresenter {
             if(success) {
                 Log.d("activity", "hashtag post execute");
                 fragment.onHashtagSelected();
+            }
+            else {
+                fragment.updateHashtags();
             }
         }
 

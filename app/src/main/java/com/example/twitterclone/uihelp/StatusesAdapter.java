@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -47,9 +48,13 @@ public class StatusesAdapter extends ArrayAdapter<Status> {
         alias.setText(status.getAlias().getUsername());
         date.setText(status.getDate());
         message.setText(status.getMessage());
-        if(!status.getUrl().equals("")) {
+        if(!status.getUrl().equals("a")) {
+            uploadimage.getSettings().setLoadsImagesAutomatically(true);
+            uploadimage.setWebViewClient(new WebViewPicture());
             uploadimage.getSettings().setLoadWithOverviewMode(true);
             uploadimage.getSettings().setUseWideViewPort(true);
+            uploadimage.setWebChromeClient(new WebChromeClient() {
+            });
             uploadimage.loadUrl(status.getUrl());
         }
 

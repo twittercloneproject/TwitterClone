@@ -29,11 +29,11 @@
                 android:text="NextPage" />
         </LinearLayout>
 
-
         <ListView
             android:id="@+id/hashtagLV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
+
 
     </LinearLayout>
 

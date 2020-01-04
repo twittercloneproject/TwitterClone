@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -31,6 +32,10 @@ public class StoryFragment extends Fragment {
     private StoryPresenter presenter;
 
     private Dialog myDialog;
+    private StatusesAdapter adapter;
+    private StatusesAdapter hashAdapter;
+    private List<Status> arrayOfStatuses;
+    private List<Status> hashtagStatuses;
 
     //Overriden method onCreateView
     @Override
@@ -39,8 +44,8 @@ public class StoryFragment extends Fragment {
 
         myDialog = new Dialog(getContext());
         presenter = new StoryPresenter(this);
-        List<Status> arrayOfStatuses = presenter.getStatuses();
-        StatusesAdapter adapter = new StatusesAdapter(getActivity(), arrayOfStatuses);
+        arrayOfStatuses = presenter.getStatuses();
+        adapter = new StatusesAdapter(getActivity(), arrayOfStatuses);
         ListView listView = (ListView) view.findViewById(R.id.followingLV);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -54,7 +59,7 @@ public class StoryFragment extends Fragment {
         nextPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                presenter.getNextStoryPage();
             }
         });
 
@@ -62,6 +67,8 @@ public class StoryFragment extends Fragment {
     }
 
     public void viewStatus(View view) {
+        Log.d("story activity", "view status called");
+
         myDialog.setContentView(R.layout.view_status);
 
         Button close = (Button) myDialog.findViewById(R.id.closeButton);
@@ -80,9 +87,11 @@ public class StoryFragment extends Fragment {
         profilePic.getSettings().setLoadWithOverviewMode(true);
         profilePic.getSettings().setUseWideViewPort(true);
         profilePic.loadUrl(s.getProfilePic());
-        if(!s.getUrl().equals("")) {
+        if(!s.getUrl().equals("a")) {
             uploadImage.getSettings().setLoadWithOverviewMode(true);
             uploadImage.getSettings().setUseWideViewPort(true);
+            uploadImage.setWebChromeClient(new WebChromeClient() {
+            });
             uploadImage.loadUrl(s.getUrl());
         }
         dateView.setText(s.getDate());
@@ -131,14 +140,13 @@ public class StoryFragment extends Fragment {
     public void onHashtagSelected() {
         Log.d("activity", "onhashthag func ");
         myDialog.setContentView(R.layout.view_hashtag);
-        List<Status> hashtagStatuses = presenter.getHashtagStatuses();
+        hashtagStatuses = presenter.getHashtagStatuses();
         final ListView hashListView = (ListView) myDialog.findViewById(R.id.hashtagLV);
-        StatusesAdapter adapter = new StatusesAdapter(getActivity(), hashtagStatuses);
-        hashListView.setAdapter(adapter);
+        hashAdapter = new StatusesAdapter(getActivity(), hashtagStatuses);
+        hashListView.setAdapter(hashAdapter);
         hashListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 viewStatus(view);
             }
         });
@@ -155,11 +163,16 @@ public class StoryFragment extends Fragment {
         nextPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                presenter.getNexthashtagPage("#forever");
             }
         });
 
         myDialog.show();
+    }
+
+    public void updateStory() {
+        arrayOfStatuses = presenter.getStatuses();
+        adapter.notifyDataSetChanged();
     }
 
     private class MyClickableAliasSpan extends ClickableSpan {
@@ -196,5 +209,10 @@ public class StoryFragment extends Fragment {
         bundle.putBoolean("story", true);
         i.putExtras(bundle);
         startActivity(i);
+    }
+
+    public void updateHashtags() {
+        this.hashtagStatuses = presenter.getHashtagStatuses();
+        hashAdapter.notifyDataSetChanged();
     }
 }

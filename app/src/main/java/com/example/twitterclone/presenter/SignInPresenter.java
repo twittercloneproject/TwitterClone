@@ -14,7 +14,7 @@ public class SignInPresenter {
     private SignInActivity activity;
 
     public void login(String alias, String password, SignInActivity act) {
-        this.alias = "@test1";
+        this.alias = alias;
         this.activity = act;
         String[] reqs = new String[2];
         reqs[0] = alias;
@@ -39,6 +39,7 @@ public class SignInPresenter {
 
         @Override
         protected void onPostExecute(Boolean signInResult) {
+
             if(signInResult) {
                 String[] reqs = new String[1];
                 reqs[0] = alias;

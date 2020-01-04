@@ -28,7 +28,6 @@ import com.example.twitterclone.api.model.UserResultUser;
 import com.example.twitterclone.api.model.UsersResult;
 import com.example.twitterclone.api.model.UsersResultUsersItem;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,12 +53,13 @@ public class TwitterProxy {
         return user;
     }
 
-    public Status getStatus(int id) {
+    public Status getStatus(String alias, String date) {
         StatusRequest request = new StatusRequest();
-        request.setId(id);
+        request.setAlias(alias);
+        request.setTime(date);
         StatusResult result = this.client.getstatusPost(request);
         StatusResultStatus rStatus = result.getStatus();
-        Status status = new Status(rStatus.getName(),rStatus.getMessage(),new Alias(rStatus.getAlias()),rStatus.getDate(),rStatus.getUrlPicture(),rStatus.getId(),rStatus.getProfilePic());
+        Status status = new Status(rStatus.getName(),rStatus.getMessage(),new Alias(rStatus.getAlias()),rStatus.getDate(),rStatus.getUrlPicture(),rStatus.getProfilePic());
         return status;
     }
 
@@ -67,7 +67,11 @@ public class TwitterProxy {
         SignInRequest request = new SignInRequest();
         request.setAlias(alias);
         request.setPassword(password);
+        Log.d("proxy activity", "before sign in call");
+
         SignInResult result = this.client.signinPost(request);
+        Log.d("proxy activity", "after sign in call");
+
         return result.getMessage();
     }
 
@@ -78,7 +82,9 @@ public class TwitterProxy {
         request.setAlias(alias);
         request.setUrl(profilePic);
         request.setPassword(password);
+        Log.d("proxy activity", "before register call");
         RegisterResult result = client.registerPost(request);
+        Log.d("proxy activity", "after register call");
         return result.getMessage();
     }
 
@@ -103,44 +109,54 @@ public class TwitterProxy {
         request.setCurrentAlias(currentAlias);
         request.setOtherAlias(otherAlias);
         IsFollowingResult result = client.isfollowingPost(request);
+        Log.d("activity", result.getIsFollowing().toString());
         return result.getIsFollowing();
     }
 
-    public List<User> getFollowers(String alias) {
+    public List<User> getFollowers(String alias, String lastUser) {
         RequestByAlias request = new RequestByAlias();
         request.setAlias(alias);
+        request.setLastUser(lastUser);
+        Log.d("proxy activity", "before getFollowers call");
         UsersResult result = client.getfollowersPost(request);
+        Log.d("proxy activity", "after getFollowers call");
         return this.createUsers(result.getUsers());
     }
 
-    public List<User> getFollowing(String alias) {
+    public List<User> getFollowing(String alias, String lastUser) {
         RequestByAlias request = new RequestByAlias();
         request.setAlias(alias);
+        request.setLastUser(lastUser);
+        Log.d("proxy activity", "before getFollowing call");
         UsersResult result = client.getfollowingPost(request);
+        Log.d("proxy activity", "after getFollowing call");
         return this.createUsers(result.getUsers());
     }
 
-    public Feed getFeed(String alias) {
+    public Feed getFeed(String alias, String lastDate) {
         RequestByAlias request = new RequestByAlias();
         request.setAlias(alias);
+        request.setLastDate(lastDate);
         StatusesResult result = client.getfeedPost(request);
         Feed feed = new Feed();
         feed.setStatuses(this.createStatuses(result.getStatuses()));
         return feed;
     }
 
-    public Story getStory(String alias) {
+    public Story getStory(String alias, String lastDate) {
         RequestByAlias request = new RequestByAlias();
         request.setAlias(alias);
+        request.setLastDate(lastDate);
         StatusesResult result = client.getstoryPost(request);
         Story story = new Story();
         story.setMyStatuses(this.createStatuses(result.getStatuses()));
         return story;
     }
 
-    public List<Status> getHashtag(String hashtag) {
+    public List<Status> getHashtag(String hashtag, String lastDate) {
         HashtagRequest request = new HashtagRequest();
         request.setHashtag(hashtag);
+        request.setLastDate(lastDate);
         StatusesResult result = client.gethashtagsPost(request);
         return this.createStatuses(result.getStatuses());
     }
@@ -154,6 +170,7 @@ public class TwitterProxy {
         request.setHashtags(hashtags);
         request.setProfilePic(profielPic);
         request.setUrlPicture(urlPicture);
+
         SendStatusResult result = client.sendstatusPost(request);
         return result.getMessage();
     }
@@ -172,7 +189,7 @@ public class TwitterProxy {
         List<Status> statuses = new ArrayList<Status>();
         Status s;
         for(int i = 0; i < items.size(); i++) {
-            s = new Status(items.get(i).getName(), items.get(i).getMessage(), new Alias(items.get(i).getAlias()), items.get(i).getDate(), items.get(i).getUrlPicture(), items.get(i).getId(),items.get(i).getProfilePic());
+            s = new Status(items.get(i).getName(), items.get(i).getMessage(), new Alias(items.get(i).getAlias()), items.get(i).getDate(), items.get(i).getUrlPicture(),items.get(i).getProfilePic());
             s.setHashtags(items.get(i).getHashtags());
             statuses.add(s);
         }

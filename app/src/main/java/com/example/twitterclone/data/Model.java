@@ -13,6 +13,7 @@ public class Model {
     private List<Status> hashtagStatuses;
     private String password = "";
     private TwitterProxy proxy;
+    private String currentAuthToken = "";
 
 
     private Model() {
@@ -49,7 +50,7 @@ public class Model {
     }
 
     public List<Status> getHashtagStatuses() {
-        return hashtagStatuses;
+        return this.hashtagStatuses;
     }
 
     public List<Integer> searchAlias(String message) {
@@ -77,19 +78,25 @@ public class Model {
     }
 
     public Status getStatus(String name, String date) {
-      //  User u = this.getUser(name);
         List<Status> sts = this.viewedUser.getFeed().getStatuses();
         for (int i = 0; i < sts.size(); i++) {
-            if (sts.get(i).getDate().equals(date)) {
+            if (sts.get(i).getDate().equals(date) && sts.get(i).getAlias().getUsername().equals(name)) {
                 return sts.get(i);
             }
         }
         sts = viewedUser.getStory().getMyStatuses();
         for (int i = 0; i < sts.size(); i++) {
-            if (sts.get(i).getDate().equals(date)) {
+            if (sts.get(i).getDate().equals(date) && sts.get(i).getAlias().getUsername().equals(name)) {
                 return sts.get(i);
             }
         }
+        sts = hashtagStatuses;
+        for (int i = 0; i < sts.size(); i++) {
+            if (sts.get(i).getDate().equals(date) && sts.get(i).getAlias().getUsername().equals(name)) {
+                return sts.get(i);
+            }
+        }
+        Log.d("activity", "null");
         return null;
     }
 
@@ -126,82 +133,119 @@ public class Model {
     }
 
     public void setViewedUserFeed(String alias) {
-        Feed feed = proxy.getFeed(alias);
+        Feed feed = proxy.getFeed(alias, "");
         this.viewedUser.setFeed(feed);
     }
 
     public void setViewedUserStory(String alias) {
-        Story story = proxy.getStory(alias);
+        Story story = proxy.getStory(alias, "");
         this.viewedUser.setStory(story);
     }
 
     public void setViewedUserFollowers(String alias) {
-        List<User> followers = proxy.getFollowers(alias);
+        List<User> followers = proxy.getFollowers(alias, "");
         this.viewedUser.setFollowers(followers);
     }
 
     public void setViewedUserFollowing(String alias) {
-        List<User> following = proxy.getFollowing(alias);
+        List<User> following = proxy.getFollowing(alias, "");
         this.viewedUser.setFollowings(following);
     }
 
     public boolean signIn(String alias, String password) {
         String message = proxy.signIn(alias, password);
-        if(message.equals("success")) {
-            return true;
+        if(message.equals("failure")) {
+            return false;
         }
         else {
-            return false;
+            this.currentAuthToken = message;
+            return true;
         }
     }
 
     public boolean register(String firstName, String lastName, String alias, String password, String profilePic) {
         String message = proxy.register(firstName, lastName, alias, password, profilePic);
-        if(message.equals("success")) {
-            return true;
+        if(message.equals("failure")) {
+            return false;
         }
         else {
-            return false;
+            this.currentAuthToken = message;
+            return true;
         }
     }
 
     public boolean setHashtagStatuses(String hashtag) {
-        this.hashtagStatuses = this.proxy.getHashtag(hashtag);
+        this.hashtagStatuses = this.proxy.getHashtag(hashtag, "");
         return true;
     }
 
-    public void getNextFeedPage(String alias) {
-        Feed tmpList = proxy.getFeed(alias);
+    public void getNextFeedPage() {
         List<Status> newList = this.viewedUser.getFeed().getStatuses();
+        if(newList.size() == 0) {
+            return;
+        }
+        Feed tmpList = proxy.getFeed(this.viewedUser.getAlias().getUsername(), newList.get(newList.size()-1).getDate());
         newList.addAll(tmpList.getStatuses());
         this.viewedUser.getFeed().setStatuses(newList);
     }
 
-    public void getNextStoryPage(String alias) {
-        Story tmpList = proxy.getStory(alias);
+    public void getNextStoryPage() {
         List<Status> newList = this.viewedUser.getStory().getMyStatuses();
+        if(newList.size() == 0) {
+            return;
+        }
+        Story tmpList = proxy.getStory(this.viewedUser.getAlias().getUsername(), newList.get(newList.size()-1).getDate());
         newList.addAll(tmpList.getMyStatuses());
+        Log.d("activity",newList.toString());
         this.viewedUser.getStory().setMyStatuses(newList);
     }
 
-    public void getNextHashtagPage(String alias) {
-        List<Status> tmpList = proxy.getHashtag(alias);
+    public void getNextHashtagPage(String hashtag) {
+        if(this.hashtagStatuses.size() == 0) {
+            return;
+        }
+        List<Status> tmpList = proxy.getHashtag(hashtag, this.hashtagStatuses.get(this.hashtagStatuses.size()-1).getDate());
         this.hashtagStatuses.addAll(tmpList);
     }
 
-    public void getNextFollowersPage(String alias) {
-        List<User> tmpList = proxy.getFollowers(alias);
+    public void getNextFollowersPage() {
         List<User> newList = this.viewedUser.getFollowers();
+        if(newList.size() == 0) {
+            return;
+        }
+        List<User> tmpList = proxy.getFollowers(this.viewedUser.getAlias().getUsername(), newList.get(newList.size()-1).getAlias().getUsername());
         newList.addAll(tmpList);
         this.viewedUser.setFollowers(newList);
     }
 
-    public void getNextFollowingPage(String alias) {
-        List<User> tmpList = proxy.getFollowing(alias);
+    public void getNextFollowingPage() {
         List<User> newList = this.viewedUser.getFollowings();
+        if(newList.size() == 0) {
+            return;
+        }
+        List<User> tmpList = proxy.getFollowing(this.viewedUser.getAlias().getUsername(), newList.get(newList.size()-1).getAlias().getUsername());
         newList.addAll(tmpList);
         this.viewedUser.setFollowings(newList);
     }
 
+    public void follow(String followerUsername, String followeeUsername) {
+        this.proxy.follow(followerUsername, followeeUsername);
+        this.currentUser.addFollowing(this.viewedUser);
+        this.viewedUser.addFollower(this.currentUser);
+    }
 
+    public void unfollow(String followerUsername, String followeeUsername) {
+        this.proxy.unFollow(followerUsername, followeeUsername);
+        this.currentUser.removeFollowing(this.viewedUser);
+        this.viewedUser.removeFollower(this.currentUser);
+    }
+
+    public boolean isFollowing(String currentUsername, String otherUsername) {
+        return this.proxy.isFollowing(currentUsername, otherUsername);
+    }
+
+    public void sendStatus(String username, String name, String message, String date,
+                           List<String> hashtags, String profilePic, String attachment) {
+        this.proxy.sendStatus(name, username, message, date, attachment, profilePic, hashtags);
+    }
 }

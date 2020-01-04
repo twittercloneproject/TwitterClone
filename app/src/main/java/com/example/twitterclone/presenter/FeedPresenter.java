@@ -42,6 +42,8 @@ public class FeedPresenter {
     }
 
     public Status getStatus(String alias, String date) {
+        Log.d("activity", alias);
+        Log.d("activity", date);
         return model.getStatus(alias, date);
     }
 
@@ -57,8 +59,20 @@ public class FeedPresenter {
         return model.searchHashTags(message);
     }
 
+    public void getNextFeedPage() {
+        String[] reqs = new String[1];
+        reqs[0] = "next";
+        FeedTask fTask = new FeedTask();
+        fTask.execute(reqs);
+    }
 
-
+    public void getNexthashtagPage(String hashtag) {
+        String[] reqs = new String[2];
+        reqs[0] = "next";
+        reqs[1] = hashtag;
+        HashtagTask hTask = new HashtagTask();
+        hTask.execute(reqs);
+    }
 
     private class UserTask extends AsyncTask<String, Void, Boolean> {
 
@@ -82,16 +96,27 @@ public class FeedPresenter {
 
         @Override
         protected Boolean doInBackground(String... FeedRequests) {
-            model.setViewedUserFeed(FeedRequests[0]);
-            return true;
+            if(FeedRequests[0].equals("next")) {
+                model.getNextFeedPage();
+                return false;
+            }
+            else {
+                model.setViewedUserFeed(FeedRequests[0]);
+                return true;
+            }
         }
 
         @Override
         protected void onPostExecute(Boolean feedResult) {
-            String[] reqs = new String[1];
-            reqs[0] = alias;
-            StoryTask sTask = new StoryTask();
-            sTask.execute(reqs);
+            if(feedResult) {
+                String[] reqs = new String[1];
+                reqs[0] = alias;
+                StoryTask sTask = new StoryTask();
+                sTask.execute(reqs);
+            }
+            else {
+                fragment.updateFeed();
+            }
         }
 
     }
@@ -152,7 +177,13 @@ public class FeedPresenter {
 
         @Override
         protected Boolean doInBackground(String... hashtags) {
-            return model.setHashtagStatuses(hashtags[0]);
+            if(hashtags[0].equals("next")) {
+                model.getNextHashtagPage(hashtags[1]);
+                return false;
+            }
+            else {
+                return model.setHashtagStatuses(hashtags[0]);
+            }
         }
 
         @Override
@@ -160,6 +191,9 @@ public class FeedPresenter {
             if(success) {
                 Log.d("activity", "hashtag post execute");
                 fragment.onHashtagSelected();
+            }
+            else {
+                fragment.updateHashtags();
             }
         }
 

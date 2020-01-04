@@ -33,16 +33,23 @@
             android:layout_width="50dp"
             android:layout_height="50dp" />
 
-        <TextView
-            android:id="@+id/alias"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="alias" />
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="date" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/alias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="alias" />
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="date" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <EditText
@@ -50,6 +57,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="What's on your mind?" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="attachment url"
+        android:id="@+id/url"/>
 
     <LinearLayout
         android:layout_width="match_parent"
